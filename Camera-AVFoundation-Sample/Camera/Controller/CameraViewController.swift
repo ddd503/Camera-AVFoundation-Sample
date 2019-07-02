@@ -10,11 +10,23 @@ import AVFoundation
 import UIKit
 
 final class CameraViewController: UIViewController {
+    @IBOutlet private weak var shutterButton: UIButton!
 
     private let session: AVCaptureSession
+    private let output: AVCapturePhotoOutput
+    private var capturePhotoSettings: AVCapturePhotoSettings {
+        // Output用の出力設定を生成（今回は出力される映像の方を全てjpegにする設定のみ）
+        let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+        // フラッシュの設定
+        settings.flashMode = .auto
+        // 最高の解像度を返すにはDeviceのhighResolutionStillImageDimensionsを設定する必要あり
+//        settings.isHighResolutionPhotoEnabled = true
+        return settings
+    }
 
-    init(session: AVCaptureSession) {
+    init(session: AVCaptureSession, output: AVCapturePhotoOutput) {
         self.session = session
+        self.output = output
         super.init(nibName: String(describing: CameraViewController.self), bundle: .main)
     }
 
@@ -25,6 +37,13 @@ final class CameraViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCamera()
+        // カメラの上にViewを乗せたい時はレイヤーを上にする
+        view.bringSubviewToFront(shutterButton)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        session.stopRunning()
     }
 
     private func setupCamera() {
@@ -41,5 +60,16 @@ final class CameraViewController: UIViewController {
         // viewにlayerをadd
         view.layer.addSublayer(layer)
     }
+
+    @IBAction func didTapShutterButton(_ sender: UIButton) {
+        output.capturePhoto(with: capturePhotoSettings, delegate: self)
+    }
+}
+
+extension CameraViewController: AVCapturePhotoCaptureDelegate {
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        print(output)
+    }
+
 
 }

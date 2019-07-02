@@ -10,12 +10,12 @@ import AVFoundation
 
 final class SessionBuilder {
 
-    static func makeCaptureSession() -> AVCaptureSession? {
+    static func makeCaptureSession() -> (session: AVCaptureSession?, output: AVCapturePhotoOutput?) {
 
         // デバイスを用意
         guard let defaultDevice = AVCaptureDevice.default(for: .video) else {
             // video用デバイスの生成に失敗
-            return nil
+            return (nil, nil)
         }
 
         /// デバイスへの確認、設定（省略可）
@@ -32,7 +32,7 @@ final class SessionBuilder {
             defaultDevice.unlockForConfiguration()
         }
 
-        /// Input, Outputの生成、設定
+        /// Input, Outputの生成、設定（AVCapturePhotoSettingsはここでセットする必要はない、撮影時に改めてセットするタイミングがあるため）
 
         // Output用の出力設定を生成（今回は出力される映像の方を全てjpegにする設定のみ）
         let capturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
@@ -49,7 +49,7 @@ final class SessionBuilder {
         // 用意したデバイスからAVCaptureDeviceInputを作成
         guard let input = try? AVCaptureDeviceInput(device: defaultDevice) else {
             // AVCaptureDeviceInputの生成に失敗
-            return nil
+            return (nil, nil)
         }
 
         // カメラ用のSessionを用意
@@ -58,7 +58,7 @@ final class SessionBuilder {
         // Session内で作成したinput、outputが使用できるか？
         guard session.canAddInput(input), session.canAddOutput(output) else {
             // input or output がsessionで使用できない
-            return nil
+            return (nil, nil)
         }
 
         // セッションへの代入が可能なら用意したいInputとOutputを入れる
@@ -66,7 +66,7 @@ final class SessionBuilder {
         session.addOutput(output)
 
         // 使用可能なSessionを返す
-        return session
+        return (session, output)
     }
 
 }
