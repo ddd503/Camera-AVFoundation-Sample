@@ -13,7 +13,7 @@ final class CameraViewController: UIViewController {
     @IBOutlet private weak var shutterButton: UIButton!
 
     private let session: AVCaptureSession
-    private let output: AVCapturePhotoOutput
+    private let output: AVCapturePhotoOutput = .init()
     private var capturePhotoSettings: AVCapturePhotoSettings {
         // Output用の出力設定を生成（今回は出力される映像の方を全てjpegにする設定のみ）
         let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
@@ -24,9 +24,8 @@ final class CameraViewController: UIViewController {
         return settings
     }
 
-    init(session: AVCaptureSession, output: AVCapturePhotoOutput) {
+    init(session: AVCaptureSession) {
         self.session = session
-        self.output = output
         super.init(nibName: String(describing: CameraViewController.self), bundle: .main)
     }
 
@@ -36,7 +35,12 @@ final class CameraViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupCamera()
+        if setupSession() {
+            setupCamera()
+        } else {
+            print("outputの追加に失敗")
+        }
+
         // カメラの上にViewを乗せたい時はレイヤーを上にする
         view.bringSubviewToFront(shutterButton)
     }
@@ -44,6 +48,15 @@ final class CameraViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         session.stopRunning()
+    }
+
+    private func setupSession() -> Bool {
+        // OutputがSessionに追加できるか
+        guard session.canAddOutput(output) else {
+            return false
+        }
+        session.addOutput(output)
+        return true
     }
 
     private func setupCamera() {
@@ -70,6 +83,4 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         print(output)
     }
-
-
 }

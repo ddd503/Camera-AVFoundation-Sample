@@ -17,13 +17,12 @@ class ViewController: UIViewController {
 
     @IBAction func didTapCameraButton(_ sender: UIButton) {
 
-        let captureSession = SessionBuilder.makeCaptureSession()
-        guard let session = captureSession.session, let output = captureSession.output else {
+        guard let session = SessionBuilder.makeCaptureSession() else {
             print("Sessionの生成に失敗")
             return
         }
 
-        let cameraVC = CameraViewController(session: session, output: output)
+        let cameraVC = CameraViewController(session: session)
 
         // カメラへのアクセス状態を確認
         if CameraAccessPermission.needsToRequestAccess {
