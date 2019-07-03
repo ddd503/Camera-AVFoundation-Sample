@@ -12,7 +12,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CameraViewController" customModule="Camera_AVFoundation_Sample" customModuleProvider="target">
             <connections>
-                <outlet property="shutterButton" destination="xEf-Rk-Y9P" id="bJu-UJ-IDv"/>
+                <outlet property="captureSessionView" destination="EOd-Cn-taQ" id="FRz-Wm-gVY"/>
+                <outlet property="shutterButton" destination="DnD-pe-fAb" id="4Sm-hP-P96"/>
+                <outlet property="shutterButtonAreaView" destination="sJM-Wc-Ebs" id="xNM-h3-2yd"/>
+                <outlet property="shutterButtonView" destination="HzK-gm-al7" id="933-5J-reo"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -21,25 +24,51 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xEf-Rk-Y9P">
-                    <rect key="frame" x="157" y="622" width="100" height="100"/>
-                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EOd-Cn-taQ">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="717"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sJM-Wc-Ebs">
+                    <rect key="frame" x="0.0" y="717" width="414" height="179"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HzK-gm-al7">
+                            <rect key="frame" x="162" y="44.5" width="90" height="90"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DnD-pe-fAb">
+                                    <rect key="frame" x="11" y="11" width="68" height="68"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="68" id="5XZ-rj-Cls"/>
+                                        <constraint firstAttribute="height" constant="68" id="6vk-tj-UXt"/>
+                                    </constraints>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="90" id="3GU-b8-2JP"/>
+                                <constraint firstAttribute="width" constant="90" id="CTX-f6-ZiH"/>
+                                <constraint firstItem="DnD-pe-fAb" firstAttribute="centerX" secondItem="HzK-gm-al7" secondAttribute="centerX" id="iaV-83-MK4"/>
+                                <constraint firstItem="DnD-pe-fAb" firstAttribute="centerY" secondItem="HzK-gm-al7" secondAttribute="centerY" id="xsp-fV-TG7"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="100" id="K0p-Sj-kF9"/>
-                        <constraint firstAttribute="height" constant="100" id="ri4-Pa-VaX"/>
+                        <constraint firstItem="HzK-gm-al7" firstAttribute="centerY" secondItem="sJM-Wc-Ebs" secondAttribute="centerY" id="7AS-zg-AFR"/>
+                        <constraint firstItem="HzK-gm-al7" firstAttribute="centerX" secondItem="sJM-Wc-Ebs" secondAttribute="centerX" id="Jhe-Y0-gcu"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="26"/>
-                    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <state key="normal" title="撮影"/>
-                    <connections>
-                        <action selector="didTapShutterButton:" destination="-1" eventType="touchUpInside" id="I0I-aQ-Ojo"/>
-                    </connections>
-                </button>
+                </view>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="xEf-Rk-Y9P" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="4kH-lp-GaI"/>
-                <constraint firstItem="xEf-Rk-Y9P" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" multiplier="1.5" id="CzV-Wa-eMW"/>
+                <constraint firstItem="EOd-Cn-taQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="5aq-g2-5jO"/>
+                <constraint firstItem="EOd-Cn-taQ" firstAttribute="height" secondItem="i5M-Pr-FkT" secondAttribute="height" multiplier="0.8" id="6zu-Gz-MOF"/>
+                <constraint firstItem="sJM-Wc-Ebs" firstAttribute="top" secondItem="EOd-Cn-taQ" secondAttribute="bottom" id="9cV-LH-IZD"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="EOd-Cn-taQ" secondAttribute="trailing" id="Ipa-AU-Wbb"/>
+                <constraint firstItem="EOd-Cn-taQ" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="K4G-JB-wmW"/>
+                <constraint firstAttribute="bottom" secondItem="sJM-Wc-Ebs" secondAttribute="bottom" id="NDe-d1-W4t"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="sJM-Wc-Ebs" secondAttribute="trailing" id="wWV-70-AMk"/>
+                <constraint firstItem="sJM-Wc-Ebs" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="zHJ-bH-dT4"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
         </view>
