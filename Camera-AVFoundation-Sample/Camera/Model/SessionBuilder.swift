@@ -42,6 +42,9 @@ final class SessionBuilder {
         // カメラ用のSessionを用意
         let session = AVCaptureSession()
 
+        session.beginConfiguration()
+        session.sessionPreset = .photo
+
         // Session内で作成したinputが使用できるか？
         guard session.canAddInput(input) else {
             print("inputがsessionで使用できない")
@@ -50,7 +53,8 @@ final class SessionBuilder {
 
         // セッションへの代入が可能なら用意したいInputとOutputを入れる
         session.addInput(input)
-
+        
+        session.commitConfiguration()
         // 使用可能なSessionを返す
         return session
     }

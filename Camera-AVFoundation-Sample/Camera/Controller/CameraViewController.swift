@@ -22,8 +22,7 @@ final class CameraViewController: UIViewController {
         let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         // フラッシュの設定
         settings.flashMode = .auto
-        // 最高の解像度を返すにはDeviceのhighResolutionStillImageDimensionsを設定する必要あり
-//        settings.isHighResolutionPhotoEnabled = true
+
         return settings
     }
 
@@ -38,15 +37,18 @@ final class CameraViewController: UIViewController {
 
     // MARK: - Life cycle
 
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        captureSessionView.backgroundColor = .red
         if setupSession() {
             setupCamera()
         } else {
             print("outputの追加に失敗")
         }
-        setupShutterButton()
+        setupComponent()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -62,12 +64,12 @@ final class CameraViewController: UIViewController {
 
     @objc private func takePhoto(sender: UIButton) {
         sender.isEnabled = false
-        output.capturePhoto(with: capturePhotoSettings, delegate: self)
+        output.capturePhoto(with: self.capturePhotoSettings, delegate: self)
     }
 
     @objc private func shrinkShutterButton(sender: UIButton) {
         let animator = UIViewPropertyAnimator(duration: 0.2, curve: .easeOut, animations: { [weak self] in
-            self?.shutterButton.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+            self?.shutterButton.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         })
         animator.startAnimation()
     }
@@ -81,7 +83,7 @@ final class CameraViewController: UIViewController {
 
     // MARK: - Private
 
-    private func setupShutterButton() {
+    private func setupComponent() {
         shutterButton.addTarget(self, action: #selector(shrinkShutterButton(sender:)), for: .touchDown)
         shutterButton.addTarget(self, action: #selector(restoreShutterButton(sender:)), for: [.touchDragOutside, .touchUpInside])
         shutterButton.addTarget(self, action: #selector(takePhoto(sender:)), for: .touchUpInside)
@@ -102,22 +104,21 @@ final class CameraViewController: UIViewController {
     }
 
     private func setupCamera() {
-        // 撮影スタート
-        session.startRunning()
-
-        // セッションからlayerを作る
-        let layer = AVCaptureVideoPreviewLayer(session: session)
+        let layer = AVCaptureVideoPreviewLayer(session: self.session)
         layer.videoGravity = .resizeAspectFill
         // カメラViewの向きを縦に固定
         layer.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
-        // layerの大きさを決める（画面の更新時には更新した方が良い）
-        layer.frame = captureSessionView.frame
+        // layerの大きさを決める（画面の更新時には更新した方が良い、sessionは画面一杯なので、viewのframeにする）
+        layer.frame = self.captureSessionView.frame
         // viewにlayerをadd
-        captureSessionView.layer.addSublayer(layer)
+        self.captureSessionView.layer.addSublayer(layer)
+
+        guard !session.isRunning else { return }
+        
+        session.startRunning()
     }
 
     private func roundCorner(views: [UIView]) {
-        view.layoutIfNeeded()
         views.forEach {
             $0.layer.masksToBounds = true
             $0.layer.cornerRadius = $0.frame.width / 2
@@ -130,7 +131,45 @@ final class CameraViewController: UIViewController {
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        shutterButton.isEnabled = true
-        print(output)
+
+        if let error = error {
+            print("撮影データ取得処理でエラー発生")
+            print(error.localizedDescription)
+            return
+        }
+
+        if let photoData = photo.fileDataRepresentation(), let photoImage = UIImage(data: photoData) {
+            let imageView = UIImageView(image: photoImage)
+            imageView.frame = self.captureSessionView.frame
+            captureSessionView.addSubview(imageView)
+            session.stopRunning()
+        } else if let screenShotView = captureSessionView.snapshotView(afterScreenUpdates: true),
+            let photoData = screenShotView.image.jpegData(compressionQuality: 1.0) {
+            // スクショ撮影 → jpegImageに変換 → Dataに変換 が成功したらここに入る
+            captureSessionView.addSubview(screenShotView)
+            session.stopRunning()
+        } else {
+            print("写真 and スクショ取得失敗")
+            shutterButton.isEnabled = true
+        }
+    }
+}
+
+// MARK: - UIView
+
+private extension UIView {
+    // UIImageへの変換
+    var image: UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
+
+    // subViewの全削除
+    func removeSubView() {
+        subviews.forEach {
+            $0.removeFromSuperview()
+        }
     }
 }

@@ -71,6 +71,7 @@
                 <constraint firstItem="sJM-Wc-Ebs" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="zHJ-bH-dT4"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="47.826086956521742" y="35.491071428571423"/>
         </view>
     </objects>
 </document>
