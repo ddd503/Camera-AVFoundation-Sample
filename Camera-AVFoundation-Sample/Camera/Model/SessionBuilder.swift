@@ -31,17 +31,15 @@ final class SessionBuilder {
             defaultDevice.unlockForConfiguration()
         }
 
-        /// Input, Outputの生成、設定（AVCapturePhotoSettingsはここでセットする必要はない、撮影時に改めてセットするタイミングがあるため）
+        /// Inputの生成、設定（AVCapturePhotoSettingsはここでセットする必要はない、撮影時に改めてセットするタイミングがあるため）
 
         // 用意したデバイスからAVCaptureDeviceInputを作成
         guard let input = try? AVCaptureDeviceInput(device: defaultDevice) else {
             print("AVCaptureDeviceInputの生成に失敗")
             return nil
         }
-
-        // カメラ用のSessionを用意
+        // カメラ用のSessionを用意、設定を開始
         let session = AVCaptureSession()
-
         session.beginConfiguration()
         session.sessionPreset = .photo
 
@@ -51,11 +49,11 @@ final class SessionBuilder {
             return nil
         }
 
-        // セッションへの代入が可能なら用意したいInputとOutputを入れる
         session.addInput(input)
-        
+
+        // 設定完了
         session.commitConfiguration()
-        // 使用可能なSessionを返す
+        
         return session
     }
 
