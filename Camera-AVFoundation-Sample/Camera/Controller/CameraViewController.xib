@@ -12,6 +12,10 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CameraViewController" customModule="Camera_AVFoundation_Sample" customModuleProvider="target">
             <connections>
                 <outlet property="captureSessionView" destination="EOd-Cn-taQ" id="FRz-Wm-gVY"/>
+                <outlet property="closeButton" destination="ACk-Kr-afR" id="wUA-ge-wqt"/>
+                <outlet property="closeButtonView" destination="B7l-CX-kDW" id="77r-Jh-wAO"/>
+                <outlet property="reshootButton" destination="Dhq-aZ-ZGK" id="hcs-qp-4V3"/>
+                <outlet property="reshootButtonView" destination="3AS-Ej-Naq" id="W9I-Ge-jkc"/>
                 <outlet property="shutterButton" destination="DnD-pe-fAb" id="4Sm-hP-P96"/>
                 <outlet property="shutterButtonAreaView" destination="sJM-Wc-Ebs" id="xNM-h3-2yd"/>
                 <outlet property="shutterButtonView" destination="HzK-gm-al7" id="933-5J-reo"/>
@@ -25,7 +29,7 @@
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EOd-Cn-taQ">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="717"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sJM-Wc-Ebs">
                     <rect key="frame" x="0.0" y="717" width="414" height="179"/>
@@ -50,11 +54,63 @@
                                 <constraint firstItem="DnD-pe-fAb" firstAttribute="centerY" secondItem="HzK-gm-al7" secondAttribute="centerY" id="xsp-fV-TG7"/>
                             </constraints>
                         </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B7l-CX-kDW">
+                            <rect key="frame" x="100" y="44.5" width="90" height="90"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ACk-Kr-afR">
+                                    <rect key="frame" x="11" y="11" width="68" height="68"/>
+                                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="68" id="KR5-8F-0hu"/>
+                                        <constraint firstAttribute="width" constant="68" id="Lny-PI-cfw"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="18"/>
+                                    <state key="normal" title="閉じる">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </state>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="ACk-Kr-afR" firstAttribute="centerY" secondItem="B7l-CX-kDW" secondAttribute="centerY" id="OK5-PW-BzK"/>
+                                <constraint firstAttribute="height" constant="90" id="be1-w9-AEd"/>
+                                <constraint firstItem="ACk-Kr-afR" firstAttribute="centerX" secondItem="B7l-CX-kDW" secondAttribute="centerX" id="nhh-wk-CKv"/>
+                                <constraint firstAttribute="width" constant="90" id="tjf-aD-G34"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3AS-Ej-Naq">
+                            <rect key="frame" x="224" y="44.5" width="90" height="90"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dhq-aZ-ZGK">
+                                    <rect key="frame" x="11" y="11" width="68" height="68"/>
+                                    <color key="backgroundColor" red="1" green="0.41927581930000002" blue="0.37943283030000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="68" id="XBr-VL-XBd"/>
+                                        <constraint firstAttribute="width" constant="68" id="uJZ-Hc-5lE"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="18"/>
+                                    <state key="normal" title="再撮影">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </state>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="Dhq-aZ-ZGK" firstAttribute="centerX" secondItem="3AS-Ej-Naq" secondAttribute="centerX" id="Acx-2z-g6N"/>
+                                <constraint firstItem="Dhq-aZ-ZGK" firstAttribute="centerY" secondItem="3AS-Ej-Naq" secondAttribute="centerY" id="ZJs-Fi-ImM"/>
+                                <constraint firstAttribute="width" constant="90" id="iLU-2f-BMH"/>
+                                <constraint firstAttribute="height" constant="90" id="opy-OM-CR2"/>
+                            </constraints>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstItem="HzK-gm-al7" firstAttribute="centerY" secondItem="sJM-Wc-Ebs" secondAttribute="centerY" id="7AS-zg-AFR"/>
+                        <constraint firstItem="B7l-CX-kDW" firstAttribute="centerY" secondItem="sJM-Wc-Ebs" secondAttribute="centerY" id="Dqe-ua-VJp"/>
+                        <constraint firstItem="B7l-CX-kDW" firstAttribute="centerX" secondItem="sJM-Wc-Ebs" secondAttribute="centerX" multiplier="0.7" id="JUb-ef-8pS"/>
                         <constraint firstItem="HzK-gm-al7" firstAttribute="centerX" secondItem="sJM-Wc-Ebs" secondAttribute="centerX" id="Jhe-Y0-gcu"/>
+                        <constraint firstItem="3AS-Ej-Naq" firstAttribute="centerX" secondItem="sJM-Wc-Ebs" secondAttribute="centerX" multiplier="1.3" id="Z0n-Ok-wDO"/>
+                        <constraint firstItem="3AS-Ej-Naq" firstAttribute="centerY" secondItem="sJM-Wc-Ebs" secondAttribute="centerY" id="biQ-cj-9oC"/>
                     </constraints>
                 </view>
             </subviews>

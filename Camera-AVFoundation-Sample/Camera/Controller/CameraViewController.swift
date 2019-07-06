@@ -13,6 +13,10 @@ final class CameraViewController: UIViewController {
     @IBOutlet private weak var shutterButtonAreaView: UIView!
     @IBOutlet private weak var shutterButtonView: UIView!
     @IBOutlet private weak var shutterButton: UIButton!
+    @IBOutlet private weak var closeButtonView: UIView!
+    @IBOutlet private weak var closeButton: UIButton!
+    @IBOutlet private weak var reshootButtonView: UIView!
+    @IBOutlet private weak var reshootButton: UIButton!
     @IBOutlet private weak var captureSessionView: UIView!
 
     private let session: AVCaptureSession
@@ -69,19 +73,38 @@ final class CameraViewController: UIViewController {
 
     @objc private func takePhoto(sender: UIButton) {
         sender.isEnabled = false
+        closeButton.isEnabled = true
+        reshootButton.isEnabled = true
         output.capturePhoto(with: self.capturePhotoSettings, delegate: self)
     }
 
-    @objc private func shrinkShutterButton(sender: UIButton) {
-        trasformAnimation(duration: 0.2) { [weak self] in
-            self?.shutterButton.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+    @objc private func shrinkButton(sender: UIButton) {
+        trasformAnimation(duration: 0.2) {
+            sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         }
     }
 
-    @objc private func restoreShutterButton(sender: UIButton) {
-        trasformAnimation(duration: 0.1) { [weak self] in
-            self?.shutterButton.transform = .identity
+    @objc private func restoreButton(sender: UIButton) {
+        trasformAnimation(duration: 0.1) {
+            sender.transform = .identity
         }
+    }
+
+    @objc private func reshoot(sender: UIButton) {
+        sender.isEnabled = false
+        shutterButton.isEnabled = true
+        captureSessionView.removeSubView()
+        if session.isRunning {
+            updateButtonsStatus(isShooting: true, duration: 0.3)
+        } else {
+            startSession { [weak self] in
+                self?.updateButtonsStatus(isShooting: true, duration: 0.3)
+            }
+        }
+    }
+
+    @objc private func close(sender: UIButton) {
+        dismiss(animated: true, completion: nil)
     }
 
     private func trasformAnimation(duration: TimeInterval, _ completion: @escaping () -> ()) {
@@ -94,12 +117,18 @@ final class CameraViewController: UIViewController {
     // MARK: - Private
 
     private func setupComponent() {
-        shutterButton.addTarget(self, action: #selector(shrinkShutterButton(sender:)), for: .touchDown)
-        shutterButton.addTarget(self, action: #selector(restoreShutterButton(sender:)), for: [.touchDragOutside, .touchUpInside])
+        addShrinkAction(buttons: [shutterButton, closeButton, reshootButton])
+        addRestoreAction(buttons: [shutterButton, closeButton, reshootButton])
         shutterButton.addTarget(self, action: #selector(takePhoto(sender:)), for: .touchUpInside)
-        roundCorner(views: [shutterButtonView, shutterButton])
-        shutterButtonView.layer.borderColor = UIColor.white.cgColor
-        shutterButtonView.layer.borderWidth = 6
+        closeButton.addTarget(self, action: #selector(close(sender:)), for: .touchUpInside)
+        reshootButton.addTarget(self, action: #selector(reshoot(sender:)), for: .touchUpInside)
+        roundCorner(views: [shutterButtonView, shutterButton,
+                            closeButtonView, closeButton,
+                            reshootButtonView, reshootButton])
+        addBorderLine(views: [(shutterButtonView, .white),
+                              (closeButtonView, closeButton.backgroundColor!),
+                              (reshootButtonView, reshootButton.backgroundColor!)])
+        updateButtonsStatus(isShooting: true, duration: 0.0)
     }
 
     private func setupCamera() {
@@ -115,6 +144,21 @@ final class CameraViewController: UIViewController {
         startSession {
             DispatchQueue.main.async { [weak self] in
                 self?.shutterButton.isEnabled = true
+            }
+        }
+    }
+
+    private func updateButtonsStatus(isShooting: Bool, duration: TimeInterval) {
+        let shutterButtonViewTransform = isShooting ? .identity : CGAffineTransform(scaleX: 0.1, y: 0.1)
+        let otherButtonViewTransform = isShooting ? CGAffineTransform(scaleX: 0.1, y: 0.1) : .identity
+        DispatchQueue.main.async { [weak self] in
+            self?.shutterButtonView.isHidden = !isShooting
+            self?.closeButtonView.isHidden = isShooting
+            self?.reshootButtonView.isHidden = isShooting
+            self?.trasformAnimation(duration: duration) {
+                self?.shutterButtonView.transform = shutterButtonViewTransform
+                self?.closeButtonView.transform = otherButtonViewTransform
+                self?.reshootButtonView.transform = otherButtonViewTransform
             }
         }
     }
@@ -139,6 +183,24 @@ final class CameraViewController: UIViewController {
         }
     }
 
+    private func addShrinkAction(buttons: [UIButton]) {
+        buttons.forEach {
+            $0.addTarget(self, action: #selector(shrinkButton(sender:)), for: .touchDown)
+        }
+    }
+
+    private func addRestoreAction(buttons: [UIButton]) {
+        buttons.forEach {
+            $0.addTarget(self, action: #selector(restoreButton(sender:)), for: [.touchDragOutside, .touchUpInside])
+        }
+    }
+
+    private func addBorderLine(views: [(view: UIView, color: UIColor)]) {
+        views.forEach {
+            $0.view.layer.borderColor = $0.color.cgColor
+            $0.view.layer.borderWidth = 6
+        }
+    }
 }
 
 // MARK: - AVCapturePhotoCaptureDelegate
@@ -158,14 +220,15 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             imageView.frame = captureSessionView.frame
             captureSessionView.addSubview(imageView)
             stopSession()
-        } else if let screenShotView = captureSessionView.snapshotView(afterScreenUpdates: true),
-            let photoData = screenShotView.image.jpegData(compressionQuality: 1.0) {
+            updateButtonsStatus(isShooting: false, duration: 0.3)
+        } else if let screenShotView = captureSessionView.snapshotView(afterScreenUpdates: true) {
             // スクショ撮影 → jpegImageに変換 → Dataに変換 が成功したらここに入る
             captureSessionView.addSubview(screenShotView)
             stopSession()
+            updateButtonsStatus(isShooting: false, duration: 0.3)
         } else {
             print("写真 and スクショ取得失敗")
-            shutterButton.isEnabled = true
+            updateButtonsStatus(isShooting: true, duration: 0.0)
         }
     }
 }
