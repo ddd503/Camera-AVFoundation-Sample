@@ -222,7 +222,7 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             stopSession()
             updateButtonsStatus(isShooting: false, duration: 0.3)
         } else if let screenShotView = captureSessionView.snapshotView(afterScreenUpdates: true) {
-            // スクショ撮影 → jpegImageに変換 → Dataに変換 が成功したらここに入る
+            // スクショ撮影が成功したらここに入る
             captureSessionView.addSubview(screenShotView)
             stopSession()
             updateButtonsStatus(isShooting: false, duration: 0.3)
